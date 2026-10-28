@@ -6,6 +6,7 @@ import DOMHelper from "@Content/Modules/DOMHelper";
 import CardLowestPrice from "@Content/Features/Community/GameCard/Components/CardLowestPrice.svelte";
 import CurrencyManager from "@Content/Modules/Currency/CurrencyManager";
 import BadgeCompletion from "@Content/Features/Community/GameCard/Components/BadgeCompletion.svelte";
+import {getCardMarketHashName} from "@Content/Features/Community/GameCard/MarketHashName";
 
 export default class FCardMarketLinks extends Feature<CGameCard> {
 
@@ -37,6 +38,7 @@ export default class FCardMarketLinks extends Feature<CGameCard> {
                 .replace(/\(\d+\)/g, "")
                 .trim();
 
+            const marketHashName = getCardMarketHashName(node, this.context.appid, cardName);
             const isUnowned = node.classList.contains("unowned");
 
             if (isUnowned) {
@@ -50,6 +52,7 @@ export default class FCardMarketLinks extends Feature<CGameCard> {
                     // currency: CurrencyManager.storeCurrency,
                     appid: this.context.appid,
                     cardName,
+                    marketHashName,
                     foil: this.context.isFoil,
                     onprice: (price: Price) => {
                         if (isUnowned) {

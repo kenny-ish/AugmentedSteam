@@ -22,13 +22,18 @@
     // export let currency: string;
     export let appid: number;
     export let cardName: string;
+    export let marketHashName: string | undefined;
     export let foil: boolean;
     export let onprice: (price: Price) => void;
 
-    let marketHashName = `${appid}-${cardName}`;
-    let cacheName = marketHashName + (foil ? "-foil" : "");
-
-    let uriPath: string = `${appid}-${encodeURIComponent(cardName)}`;
+    let effectiveMarketHashName = "";
+    let cacheName = "";
+    let uriPath = "";
+    $: {
+        effectiveMarketHashName = marketHashName ?? `${appid}-${cardName}`;
+        cacheName = effectiveMarketHashName + (foil ? "-foil" : "");
+        uriPath = encodeURIComponent(effectiveMarketHashName);
+    }
     let promise: Promise<Price|null>|null = null;
 
     async function loadFromCache(): Promise<Price|null> {
@@ -77,7 +82,7 @@
         let fetched = false;
         for (const [sb, sf] of CardSuffixes) {
             const suffix = foil ? sf : sb;
-            price = await fetchCardPrices(marketHashName + suffix);
+            price = await fetchCardPrices(effectiveMarketHashName + suffix);
             if (price) {
                 fetched = true;
                 uriPath += suffix;
